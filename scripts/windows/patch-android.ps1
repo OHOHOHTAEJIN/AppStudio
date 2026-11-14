@@ -76,6 +76,38 @@ if ($gradle.EndsWith('.kts')) {
       '            ' + $signing)
   }
 }
+# google_mlkit_text_recognition exposes optional script APIs, but our apps
+# package Latin and Korean models only. Do not add huge unused OCR models.
+# Tell R8 that references to unused optional language implementations are safe
+# to ignore, while retaining full shrinking for actual packaged classes.
+if ($appName -eq 'privacy_mosaic' -or $appName -eq 'docu_snap') {
+  $rulesPath = Join-Path $root 'android\app\proguard-rules.pro'
+  $rulesContent = @'
+# Optional ML Kit language implementations are not packaged.
+# The applications only request Latin or Korean text recognition.
+-dontwarn com.google.mlkit.vision.text.chinese.**
+-dontwarn com.google.mlkit.vision.text.japanese.**
+-dontwarn com.google.mlkit.vision.text.devanagari.**
+'@
+  [System.IO.File]::WriteAllText($rulesPath, $rulesContent, $utf8)
+  if ($gradle.EndsWith('.kts')) {
+    $shrinkToken = 'isShrinkResources = true'
+    $rulesToken = 'proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")'
+    if (-not $gradleText.Contains($rulesToken)) {
+      if (-not $gradleText.Contains($shrinkToken)) { throw "R8 shrink option missing for $appName" }
+      $gradleText = $gradleText.Replace($shrinkToken,
+        $shrinkToken + [Environment]::NewLine + '            ' + $rulesToken)
+    }
+  } else {
+    $shrinkToken = 'shrinkResources true'
+    $rulesToken = "proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'"
+    if (-not $gradleText.Contains($rulesToken)) {
+      if (-not $gradleText.Contains($shrinkToken)) { throw "R8 shrink option missing for $appName" }
+      $gradleText = $gradleText.Replace($shrinkToken,
+        $shrinkToken + [Environment]::NewLine + '            ' + $rulesToken)
+    }
+  }
+}
 [System.IO.File]::WriteAllText($gradle, $gradleText, $utf8)
 
 $manifest = Join-Path $root 'android\app\src\main\AndroidManifest.xml'
