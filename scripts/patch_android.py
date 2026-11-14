@@ -30,6 +30,11 @@ for old, new in [
     ("minSdkVersion flutter.minSdkVersion", "minSdkVersion 24"),
 ]:
     data = data.replace(old, new)
+if name == "docu_snap" and "com.google.mlkit:text-recognition-korean:16.0.1" not in data:
+    if gradle.suffix == ".kts":
+        data += '\n\ndependencies {\n    implementation("com.google.mlkit:text-recognition-korean:16.0.1")\n}\n'
+    else:
+        data += "\n\ndependencies {\n    implementation 'com.google.mlkit:text-recognition-korean:16.0.1'\n}\n"
 gradle.write_text(data, encoding="utf-8")
 manifest = root / "android/app/src/main/AndroidManifest.xml"
 if manifest.exists():

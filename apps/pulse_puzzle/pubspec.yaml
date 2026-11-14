@@ -1,6 +1,6 @@
 name: pulse_puzzle
 description: 60-second number puzzle
-version: 0.1.0+1
+version: 0.2.0+2
 publish_to: none
 environment:
   sdk: '>=3.5.0 <4.0.0'
