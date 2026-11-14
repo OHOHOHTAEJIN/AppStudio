@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_interpolation_to_compose_strings
 import 'dart:async';
 import 'dart:io';
 import 'package:app_core/app_core.dart';
@@ -156,18 +157,22 @@ class _OptimizerPageState extends State<OptimizerPage> {
       );
       _videoTask = task;
       _videoListener = task.progress.listen((value) {
-        if (mounted) setState(() =>
-            _videoProgress = value.clamp(0.0, 1.0).toDouble());
+        if (mounted) {
+          setState(() => _videoProgress = value.clamp(0.0, 1.0).toDouble());
+        }
       });
       final info = await task.result;
-      if (mounted) setState(() {
-        _videoResult = File(info.path);
-        _videoProgress = 1;
-      });
+      if (mounted) {
+        setState(() {
+          _videoResult = File(info.path);
+          _videoProgress = 1;
+        });
+      }
     } on VideoCompressException catch (e) {
-      if (mounted) setState(() =>
-        _error = e.error == VideoCompressError.cancelled ?
-          '동영상 압축이 취소됐습니다.' : '동영상 압축 실패: $e');
+      if (mounted) {
+        setState(() => _error = e.error == VideoCompressError.cancelled
+            ? '동영상 압축이 취소됐습니다.' : '동영상 압축 실패: $e');
+      }
     } catch (e) {
       if (mounted) setState(() => _error = '동영상 압축 오류: $e');
     } finally {

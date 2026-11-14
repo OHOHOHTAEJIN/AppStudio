@@ -1,5 +1,5 @@
+// ignore_for_file: prefer_interpolation_to_compose_strings
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:app_core/app_core.dart';
 import 'package:flutter/foundation.dart';
@@ -355,8 +355,10 @@ class _DocumentPageState extends State<DocumentPage> {
             OutlinedButton.icon(
               onPressed: _recognizedText!.isEmpty ? null : () async {
                 await Clipboard.setData(ClipboardData(text: _recognizedText!));
-                if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('인식한 글자를 복사했습니다.')));
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('인식한 글자를 복사했습니다.')));
+                }
               },
               icon: const Icon(Icons.copy_outlined),
               label: const Text('텍스트 복사'),

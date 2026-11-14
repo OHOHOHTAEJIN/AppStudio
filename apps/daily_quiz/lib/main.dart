@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_interpolation_to_compose_strings
 import 'dart:math';
 
 import 'package:app_core/app_core.dart';
@@ -122,10 +123,12 @@ class _QuizPageState extends State<QuizPage> {
         await prefs.setInt('quiz_best', _best);
       }
     }
-    if (mounted) setState(() {
-      _started = false;
-      _finished = true;
-    });
+    if (mounted) {
+      setState(() {
+        _started = false;
+        _finished = true;
+      });
+    }
   }
 
   void _chooseMode(QuizMode mode) {
