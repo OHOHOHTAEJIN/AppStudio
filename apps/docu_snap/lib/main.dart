@@ -89,7 +89,7 @@ class _DocumentPageState extends State<DocumentPage> {
     if (_busy) return;
     setState(() {
       _photos.removeAt(index);
-      _selectedIndex = _photos.isEmpty ? 0 : _selectedIndex.clamp(0, _photos.length - 1);
+      _selectedIndex = _photos.isEmpty ? 0 : _selectedIndex.clamp(0, _photos.length - 1).toInt();
       _recognizedText = null;
       _lastPdf = null;
     });
@@ -344,8 +344,7 @@ class _DocumentPageState extends State<DocumentPage> {
           FilledButton.tonalIcon(
             onPressed: _photos.isEmpty || _busy ? null : _recognize,
             icon: const Icon(Icons.text_snippet_outlined),
-            label: Text('$_selectedIndex번 사진' == '-1번 사진' ? '글자 인식' :
-              (_selectedIndex + 1).toString() + '번 사진 글자 인식'),
+            label: Text((_selectedIndex + 1).toString() + '번 사진 글자 인식'),
           ),
           if (_recognizedText != null) ...[
             const SizedBox(height: 12),
