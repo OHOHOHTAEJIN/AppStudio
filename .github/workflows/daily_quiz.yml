@@ -1,18 +1,5 @@
 name: daily_quiz CI
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'apps/daily_quiz/**'
-      - 'packages/app_core/**'
-      - 'scripts/patch_android.py'
-      - '.github/workflows/daily_quiz.yml'
-  pull_request:
-    paths:
-      - 'apps/daily_quiz/**'
-      - 'packages/app_core/**'
-      - 'scripts/patch_android.py'
-      - '.github/workflows/daily_quiz.yml'
   workflow_dispatch:
 permissions:
   contents: read

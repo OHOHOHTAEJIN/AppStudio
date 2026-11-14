@@ -1,18 +1,5 @@
 name: pulse_puzzle CI
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'apps/pulse_puzzle/**'
-      - 'packages/app_core/**'
-      - 'scripts/patch_android.py'
-      - '.github/workflows/pulse_puzzle.yml'
-  pull_request:
-    paths:
-      - 'apps/pulse_puzzle/**'
-      - 'packages/app_core/**'
-      - 'scripts/patch_android.py'
-      - '.github/workflows/pulse_puzzle.yml'
   workflow_dispatch:
 permissions:
   contents: read

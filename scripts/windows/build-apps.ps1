@@ -1,5 +1,5 @@
 param(
-  [ValidateSet('all', 'pulse_puzzle', 'pixel_slim', 'docu_snap', 'daily_quiz')]
+  [ValidateSet('all', 'privacy_mosaic', 'pixel_slim', 'docu_snap', 'shift_pay')]
   [string]$App = 'all'
 )
 
@@ -7,7 +7,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
-$allApps = @('pulse_puzzle', 'pixel_slim', 'docu_snap', 'daily_quiz')
+$allApps = @('privacy_mosaic', 'pixel_slim', 'docu_snap', 'shift_pay')
 $selected = if ($App -eq 'all') { $allApps } else { @($App) }
 $outputRoot = Join-Path $repoRoot 'appstudio-apks'
 
@@ -42,6 +42,9 @@ foreach ($name in $selected) {
     & (Join-Path $repoRoot 'scripts\windows\patch-android.ps1') -AppPath $appPath
     Invoke-Checked -Executable 'flutter' -ArgList @('clean')
     Invoke-Checked -Executable 'flutter' -ArgList @('pub', 'get')
+    if ($name -eq 'privacy_mosaic' -or $name -eq 'shift_pay') {
+      Invoke-Checked -Executable 'dart' -ArgList @('run', 'tool/generate_icon.dart', $name)
+    }
     Invoke-Checked -Executable 'dart' -ArgList @('run', 'flutter_launcher_icons')
     $launcher = Join-Path $appPath 'android\app\src\main\res\mipmap-xxxhdpi\ic_launcher.png'
     if (-not (Test-Path -LiteralPath $launcher)) { throw "Launcher PNG not generated: $launcher" }
