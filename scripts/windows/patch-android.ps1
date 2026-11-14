@@ -135,6 +135,60 @@ if (Test-Path $gradleProperties) {
   }
 }
 
+# Limit this generated AppStudio project's Gradle memory/parallelism.
+# Do not edit JVM, Gradle or service settings shared with UikChanggo.
+$gradleProperties = Join-Path $root 'android\gradle.properties'
+if (Test-Path -LiteralPath $gradleProperties) {
+  $settings = [System.IO.File]::ReadAllText($gradleProperties)
+  $memoryLine = 'org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1024m -Dfile.encoding=UTF-8'
+  if ($settings -match '(?m)^org\.gradle\.jvmargs=.*
+if (Test-Path $generatedTest) {
+  $content = [System.IO.File]::ReadAllText($generatedTest)
+  if ($content.Contains('await tester.pumpWidget(const MyApp());')) {
+    Remove-Item $generatedTest -Force
+  }
+}
+
+Write-Host "[END] patch-android $appName (API 36; PowerShell; no Python dependency)"
+) {
+    $settings = [regex]::Replace($settings, '(?m)^org\.gradle\.jvmargs=.*
+if (Test-Path $generatedTest) {
+  $content = [System.IO.File]::ReadAllText($generatedTest)
+  if ($content.Contains('await tester.pumpWidget(const MyApp());')) {
+    Remove-Item $generatedTest -Force
+  }
+}
+
+Write-Host "[END] patch-android $appName (API 36; PowerShell; no Python dependency)"
+, $memoryLine)
+  } else {
+    $settings += [Environment]::NewLine + $memoryLine
+  }
+  foreach ($item in @(
+    'org.gradle.workers.max=2',
+    'org.gradle.parallel=false'
+  )) {
+    $key = $item.Split('=')[0]
+    if ($settings -match ('(?m)^' + [regex]::Escape($key) + '=')) {
+      $settings = [regex]::Replace($settings,
+        '(?m)^' + [regex]::Escape($key) + '=.*
+if (Test-Path $generatedTest) {
+  $content = [System.IO.File]::ReadAllText($generatedTest)
+  if ($content.Contains('await tester.pumpWidget(const MyApp());')) {
+    Remove-Item $generatedTest -Force
+  }
+}
+
+Write-Host "[END] patch-android $appName (API 36; PowerShell; no Python dependency)"
+, $item)
+    } else {
+      $settings += [Environment]::NewLine + $item
+    }
+  }
+  [System.IO.File]::WriteAllText($gradleProperties, $settings, $utf8)
+  Write-Host '[GRADLE] AppStudio limits: Xmx4g, metaspace1g, 2 workers, no parallel projects'
+}
+
 $generatedTest = Join-Path $root 'test\widget_test.dart'
 if (Test-Path $generatedTest) {
   $content = [System.IO.File]::ReadAllText($generatedTest)

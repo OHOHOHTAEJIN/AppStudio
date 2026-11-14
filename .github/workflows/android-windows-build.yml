@@ -86,6 +86,23 @@ jobs:
           if (-not (Test-Path (Join-Path $dir 'size-report.csv'))) { throw 'Missing size report' }
           if ($apks.Count -ne $expected) { throw "Expected $expected APK(s), found $($apks.Count)" }
 
+      - name: Diagnose Java or Gradle crash (on failure)
+        if: failure()
+        run: |
+          $root = Join-Path $env:GITHUB_WORKSPACE 'apps'
+          $crashes = @(Get-ChildItem -LiteralPath $root -Filter 'hs_err_pid*.log' -File -Recurse -ErrorAction SilentlyContinue)
+          if ($crashes.Count -eq 0) {
+            Write-Host '[JAVA] No hs_err_pid JVM crash log was generated.'
+          } else {
+            foreach ($file in $crashes) {
+              Write-Host "[JAVA] Crash log detected in $($file.Directory.Name)"
+              Get-Content -LiteralPath $file.FullName -TotalCount 120 |
+                Select-String -Pattern 'EXCEPTION_|SIGSEGV|SIGBUS|OutOfMemoryError|Out of Memory|Problematic frame|Native memory allocation|Internal Error|Error occurred|JRE version|Java VM' |
+                Select-Object -First 20 |
+                ForEach-Object { Write-Host "[JAVA] $($_.Line)" }
+            }
+          }
+
       - name: Upload generated APKs to GitHub Actions artifacts
         uses: actions/upload-artifact@v4
         with:
