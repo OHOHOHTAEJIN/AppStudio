@@ -79,11 +79,22 @@ jobs:
         run: |
           .\scripts\windows\build-apps.ps1 -App $env:APPSTUDIO_SELECTION
 
+      - name: Verify APK outputs before upload
+        env:
+          APPSTUDIO_SELECTION: ${{ inputs.app || 'all' }}
+        run: |
+          $dir = Join-Path $env:GITHUB_WORKSPACE 'appstudio-apks'
+          if (-not (Test-Path -LiteralPath $dir)) { throw "APK output directory missing: $dir" }
+          $apks = @(Get-ChildItem -LiteralPath $dir -Filter '*.apk' -File)
+          $expected = if ($env:APPSTUDIO_SELECTION -eq 'all') { 4 } else { 1 }
+          $apks | ForEach-Object { Write-Host "[APK] $($_.Name) $($_.Length) bytes" }
+          if ($apks.Count -ne $expected) { throw "Expected $expected APK(s), found $($apks.Count)" }
+
       - name: Upload generated APKs to GitHub Actions artifacts
         uses: actions/upload-artifact@v4
         with:
           name: appstudio-debug-apks-${{ github.run_number }}
-          path: .build-artifacts/**/*.apk
+          path: ${{ github.workspace }}/appstudio-apks/
           if-no-files-found: error
           retention-days: 21
 
@@ -107,5 +118,5 @@ jobs:
           name: AppStudio test build ${{ github.run_number }}
           prerelease: true
           generate_release_notes: false
-          files: release-files/**/*.apk
+          files: release-files/*.apk
           fail_on_unmatched_files: true

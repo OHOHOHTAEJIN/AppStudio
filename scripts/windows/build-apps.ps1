@@ -9,7 +9,7 @@ $ErrorActionPreference = 'Stop'
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 $allApps = @('pulse_puzzle', 'pixel_slim', 'docu_snap', 'daily_quiz')
 $selected = if ($App -eq 'all') { $allApps } else { @($App) }
-$outputRoot = Join-Path $repoRoot '.build-artifacts'
+$outputRoot = Join-Path $repoRoot 'appstudio-apks'
 
 if (-not (Get-Command flutter -ErrorAction SilentlyContinue)) {
   throw 'flutter not found in the runner service PATH. Configure Flutter SDK for this Windows service account and restart the AppStudio runner service only.'
@@ -50,9 +50,7 @@ foreach ($name in $selected) {
     if (-not (Test-Path $sourceApk)) {
       throw "Expected APK missing: $sourceApk"
     }
-    $appOutput = Join-Path $outputRoot $name
-    New-Item -ItemType Directory -Force -Path $appOutput | Out-Null
-    $targetApk = Join-Path $appOutput "$name-debug.apk"
+    $targetApk = Join-Path $outputRoot "$name-debug.apk"
     Copy-Item $sourceApk $targetApk -Force
     $sizeMb = [math]::Round((Get-Item $targetApk).Length / 1MB, 2)
     $elapsed = [math]::Round(((Get-Date) - $started).TotalMilliseconds)

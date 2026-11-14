@@ -9,3 +9,5 @@
 *.keystore
 .env
 .build-artifacts/
+
+appstudio-apks/
