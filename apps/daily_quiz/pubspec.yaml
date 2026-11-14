@@ -1,6 +1,6 @@
 name: daily_quiz
 description: Daily 10-question trivia
-version: 0.1.0+1
+version: 0.2.0+2
 publish_to: none
 environment:
   sdk: '>=3.5.0 <4.0.0'

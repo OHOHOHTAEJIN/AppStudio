@@ -41,6 +41,21 @@ $replacements = @(
 foreach ($pair in $replacements) {
   $gradleText = $gradleText.Replace($pair[0], $pair[1])
 }
+# The Korean OCR model is required in addition to the Flutter ML Kit wrapper.
+if ($appName -eq 'docu_snap') {
+  $ocr = 'com.google.mlkit:text-recognition-korean:16.0.1'
+  if (-not $gradleText.Contains($ocr)) {
+    if ($gradle.EndsWith('.kts')) {
+      $gradleText += [Environment]::NewLine + 'dependencies {' +
+          [Environment]::NewLine + '    implementation("' + $ocr + '")' +
+          [Environment]::NewLine + '}' + [Environment]::NewLine
+    } else {
+      $gradleText += [Environment]::NewLine + 'dependencies {' +
+          [Environment]::NewLine + "    implementation '" + $ocr + "'" +
+          [Environment]::NewLine + '}' + [Environment]::NewLine
+    }
+  }
+}
 [System.IO.File]::WriteAllText($gradle, $gradleText, $utf8)
 
 $manifest = Join-Path $root 'android\app\src\main\AndroidManifest.xml'
