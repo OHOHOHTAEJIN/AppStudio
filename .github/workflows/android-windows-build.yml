@@ -54,6 +54,10 @@ jobs:
           persist-credentials: false
           clean: true
 
+      - name: Detect Android SDK for Windows service account
+        run: |
+          .\scripts\windows\detect-android-sdk.ps1
+
       - name: Validate local Flutter/Android toolchain
         run: |
           Write-Host "Runner: $env:RUNNER_NAME"
