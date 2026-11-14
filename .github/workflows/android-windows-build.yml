@@ -1,0 +1,95 @@
+name: AppStudio - Build Android on Home Windows
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/**'
+      - 'packages/**'
+      - 'scripts/**'
+      - '.github/workflows/android-windows-build.yml'
+  workflow_dispatch:
+    inputs:
+      app:
+        description: Android app to build
+        type: choice
+        required: true
+        default: all
+        options:
+          - all
+          - pulse_puzzle
+          - pixel_slim
+          - docu_snap
+          - daily_quiz
+      publish_release:
+        description: Also publish debug APKs as a GitHub prerelease (not Play Store)
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: appstudio-windows-android
+  cancel-in-progress: false
+
+jobs:
+  build-on-home-pc:
+    if: github.repository == 'OHOHOHTAEJIN/AppStudio'
+    runs-on: [self-hosted, Windows, X64, appstudio-android]
+    timeout-minutes: 180
+    defaults:
+      run:
+        shell: powershell
+    steps:
+      - name: Checkout exact GitHub commit to the home PC
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          clean: true
+
+      - name: Validate local Flutter/Android toolchain
+        run: |
+          Write-Host "Runner: $env:RUNNER_NAME"
+          Write-Host "Workspace: $env:GITHUB_WORKSPACE"
+          Get-Command flutter -ErrorAction Stop | Select-Object -ExpandProperty Source
+          Get-Command python -ErrorAction Stop | Select-Object -ExpandProperty Source
+          flutter --version
+          if ($LASTEXITCODE -ne 0) { throw 'Flutter is not usable in the runner service account' }
+
+      - name: Build selected Android debug APKs on this machine
+        env:
+          APPSTUDIO_SELECTION: ${{ inputs.app || 'all' }}
+        run: |
+          .\scripts\windows\build-apps.ps1 -App $env:APPSTUDIO_SELECTION
+
+      - name: Upload generated APKs to GitHub Actions artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: appstudio-debug-apks-${{ github.run_number }}
+          path: .build-artifacts/**/*.apk
+          if-no-files-found: error
+          retention-days: 21
+
+  publish-debug-prerelease:
+    if: github.event_name == 'workflow_dispatch' && inputs.publish_release == true
+    needs: build-on-home-pc
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download APKs built on the home PC
+        uses: actions/download-artifact@v4
+        with:
+          name: appstudio-debug-apks-${{ github.run_number }}
+          path: release-files
+
+      - name: Publish test builds in GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: appstudio-debug-${{ github.run_number }}
+          name: AppStudio test build ${{ github.run_number }}
+          prerelease: true
+          generate_release_notes: false
+          files: release-files/**/*.apk
+          fail_on_unmatched_files: true
