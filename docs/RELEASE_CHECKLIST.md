@@ -12,3 +12,11 @@
 - [ ] 아이콘·스크린샷·스토어 설명·연락처
 - [ ] Play Console 요구사항에 따른 테스트와 정식 게시 심사
 - [ ] 릴리스별 Crash/ANR 및 DAU/유지율/광고수익 추적
+
+## Android 경량화
+- [x] ARM64 Release APK 기본 생성, Debug APK 중단
+- [x] AOT 난독화·심볼 외부 분리·아이콘 트리 셰이킹
+- [x] R8 및 Android 리소스 축소
+- [x] 과거 Debug 용량과 새 Release 크기 자동 비교
+- [ ] Windows 최적화 Release 빌드 실제 성공 및 크기·서명 검증
+- [ ] Play Store 서명된 AAB 및 기기별 전달 용량 확인

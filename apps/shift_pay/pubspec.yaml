@@ -1,6 +1,6 @@
 name: shift_pay
 description: Offline work shifts and estimated salary calculator
-version: 0.1.0+1
+version: 0.1.1+2
 publish_to: none
 environment:
   sdk: '>=3.5.0 <4.0.0'

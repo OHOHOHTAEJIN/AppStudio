@@ -58,6 +58,24 @@ if ($appName -eq 'docu_snap' -or $appName -eq 'privacy_mosaic') {
     }
   }
 }
+# Explicit Android shrinker settings; the release build also enables Flutter's R8.
+if ($gradle.EndsWith('.kts')) {
+  $signing = 'signingConfig = signingConfigs.getByName("debug")'
+  if ($gradleText.Contains($signing) -and -not $gradleText.Contains('isShrinkResources = true')) {
+    $gradleText = $gradleText.Replace($signing,
+      'isMinifyEnabled = true' + [Environment]::NewLine +
+      '            isShrinkResources = true' + [Environment]::NewLine +
+      '            ' + $signing)
+  }
+} else {
+  $signing = 'signingConfig signingConfigs.debug'
+  if ($gradleText.Contains($signing) -and -not $gradleText.Contains('shrinkResources true')) {
+    $gradleText = $gradleText.Replace($signing,
+      'minifyEnabled true' + [Environment]::NewLine +
+      '            shrinkResources true' + [Environment]::NewLine +
+      '            ' + $signing)
+  }
+}
 [System.IO.File]::WriteAllText($gradle, $gradleText, $utf8)
 
 $manifest = Join-Path $root 'android\app\src\main\AndroidManifest.xml'

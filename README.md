@@ -28,7 +28,11 @@ cd D:\AppStudio
 .\scripts\bootstrap.ps1 -App all
 ```
 
-APK는 디버그 설치용입니다. Play Store용 AAB/서명/AdMob/UMP 및 실제 기기 검증은 별도 작업입니다.
+기본 산출물은 **ARM64 전용 최적화 Release APK**입니다. Flutter AOT, Android R8·리소스 축소, 아이콘 트리셰이킹, 난독화·심볼 분리를 적용하고 Debug APK 자동 빌드는 중단했습니다.
+
+Flutter 생성 Android 템플릿은 Release 모드에 **테스트용(debug) 서명키**를 사용합니다. APK는 실기기 설치·테스트용이며 Play Store 출시에는 앱별 업로드 키와 서명된 AAB가 별도로 필요합니다. ARM64 전용이므로 32비트 단독 기기나 x86 에뮬레이터에는 설치할 수 없습니다.
+
+GitHub Actions에 `appstudio-release-arm64-N`(APK 4개 + 크기 비교 CSV), `appstudio-android-symbols-N`(스택 추적용 심볼)을 분리해 업로드합니다. AdMob/UMP 및 실기기 검증은 별도 작업입니다.
 
 ## 개인정보·급여 안내
 
@@ -49,3 +53,9 @@ APK는 디버그 설치용입니다. Play Store용 AAB/서명/AdMob/UMP 및 실�
 - ZIP 약 341 MB, 21일 보관; debug APK이므로 Play Store 제출용 서명 AAB는 아님
 
 **제약:** Flutter 테스트/Android 빌드 성공과 실기기의 ML Kit 얼굴·문자 인식, 파일 공유, 화면 터치 동작은 별도 검증입니다. 실사용 전 [신규 앱 QA](docs/QA_NEW_APPS.md)를 확인하세요.
+
+## 경량화 빌드 (2026-11-14)
+- `flutter build apk --release --target-platform=android-arm64 --obfuscate --split-debug-info=<symbols> --tree-shake-icons`
+- R8 Java/Kotlin 코드 및 미사용 Android 리소스 축소
+- 4개 앱별 용량과 기존 디버그 대비 감소율은 `size-report.csv`에 자동 기록
+- 최신 Windows 빌드 성공 후 확정한 APK 크기를 사용해야 합니다. #13은 이전 Debug 비교 기준입니다.

@@ -20,11 +20,6 @@ on:
           - pixel_slim
           - docu_snap
           - shift_pay
-      publish_release:
-        description: Also publish debug APKs as a GitHub prerelease (not Play Store)
-        type: boolean
-        required: false
-        default: false
 
 permissions:
   contents: read
@@ -73,7 +68,7 @@ jobs:
           flutter --version
           if ($LASTEXITCODE -ne 0) { throw 'Flutter is not usable in the runner service account' }
 
-      - name: Build selected Android debug APKs on this machine
+      - name: Build optimized ARM64 release APKs on this machine
         env:
           APPSTUDIO_SELECTION: ${{ inputs.app || 'all' }}
         run: |
@@ -85,38 +80,24 @@ jobs:
         run: |
           $dir = Join-Path $env:GITHUB_WORKSPACE 'appstudio-apks'
           if (-not (Test-Path -LiteralPath $dir)) { throw "APK output directory missing: $dir" }
-          $apks = @(Get-ChildItem -LiteralPath $dir -Filter '*.apk' -File)
+          $apks = @(Get-ChildItem -LiteralPath $dir -Filter '*-arm64-release.apk' -File)
           $expected = if ($env:APPSTUDIO_SELECTION -eq 'all') { 4 } else { 1 }
-          $apks | ForEach-Object { Write-Host "[APK] $($_.Name) $($_.Length) bytes" }
+          $apks | ForEach-Object { Write-Host "[ARM64 RELEASE] $($_.Name) $($_.Length) bytes" }
+          if (-not (Test-Path (Join-Path $dir 'size-report.csv'))) { throw 'Missing size report' }
           if ($apks.Count -ne $expected) { throw "Expected $expected APK(s), found $($apks.Count)" }
 
       - name: Upload generated APKs to GitHub Actions artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: appstudio-debug-apks-${{ github.run_number }}
+          name: appstudio-release-arm64-${{ github.run_number }}
           path: ${{ github.workspace }}/appstudio-apks/
           if-no-files-found: error
           retention-days: 21
-
-  publish-debug-prerelease:
-    if: github.event_name == 'workflow_dispatch' && inputs.publish_release == true
-    needs: build-on-home-pc
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Download APKs built on the home PC
-        uses: actions/download-artifact@v4
+      
+      - name: Upload release symbols as a separate artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: appstudio-debug-apks-${{ github.run_number }}
-          path: release-files
-
-      - name: Publish test builds in GitHub Releases
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: appstudio-debug-${{ github.run_number }}
-          name: AppStudio test build ${{ github.run_number }}
-          prerelease: true
-          generate_release_notes: false
-          files: release-files/*.apk
-          fail_on_unmatched_files: true
+          name: appstudio-android-symbols-${{ github.run_number }}
+          path: ${{ github.workspace }}/appstudio-symbols/
+          if-no-files-found: error
+          retention-days: 30

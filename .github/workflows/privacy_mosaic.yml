@@ -47,14 +47,3 @@ jobs:
       - name: Widget and calculation tests
         working-directory: apps/privacy_mosaic
         run: flutter test
-      - name: Debug APK (manual only)
-        if: github.event_name == 'workflow_dispatch'
-        working-directory: apps/privacy_mosaic
-        run: flutter build apk --debug
-      - name: Upload debug APK (manual only)
-        if: github.event_name == 'workflow_dispatch'
-        uses: actions/upload-artifact@v4
-        with:
-          name: privacy_mosaic-debug-apk
-          path: apps/privacy_mosaic/build/app/outputs/flutter-apk/app-debug.apk
-          if-no-files-found: error

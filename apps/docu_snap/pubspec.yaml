@@ -1,6 +1,6 @@
 name: docu_snap
 description: Offline camera to PDF
-version: 0.2.0+2
+version: 0.2.1+3
 publish_to: none
 environment:
   sdk: '>=3.5.0 <4.0.0'
