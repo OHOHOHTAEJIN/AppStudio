@@ -43,9 +43,8 @@ AppStudio Windows 서비스가 실행되는 계정에서 아래 도구가 접근
 ```powershell
 flutter --version
 flutter doctor -v
-python --version
 java -version
-Get-Command flutter, python, java
+Get-Command flutter, java
 ```
 
 Flutter 3.35.2 / Android SDK Platform 36 / Android SDK build tools / Java 17 권장.
@@ -75,6 +74,7 @@ GitHub Actions Artifacts에 zip 형식으로 자동 업로드.
 - workflow가 queued: 레이블 `appstudio-android`, Windows/X64 일치 여부,
   서비스 상태 및 Online/Idle 여부 확인
 - flutter not found: **서비스 계정 PATH** 확인, 새 서비스만 재시작
+- Python은 로컬 Windows 빌드에 필요하지 않음(플랫폼 패치는 PowerShell 스크립트)
 - SDK/Gradle 실패: `flutter doctor -v` 및 Android SDK Platform 36 확인
 - 문서/이미지 접근 실패: 신규 서비스 계정과 폴더 ACL 확인
 - 두 러너 중 하나를 정지할 때 `Stop-Service 'actions.runner.*'`처럼

@@ -14,9 +14,6 @@ $outputRoot = Join-Path $repoRoot '.build-artifacts'
 if (-not (Get-Command flutter -ErrorAction SilentlyContinue)) {
   throw 'flutter not found in the runner service PATH. Configure Flutter SDK for this Windows service account and restart the AppStudio runner service only.'
 }
-if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
-  throw 'python not found in the runner service PATH.'
-}
 
 function Invoke-Checked {
   param([string]$Executable, [string[]]$ArgList)
@@ -42,9 +39,7 @@ foreach ($name in $selected) {
     Invoke-Checked -Executable 'flutter' -ArgList @(
       'create', '--platforms=android', '--org=com.uikstudio', "--project-name=$name", '--no-pub', '.'
     )
-    Invoke-Checked -Executable 'python' -ArgList @(
-      (Join-Path $repoRoot 'scripts\patch_android.py'), $appPath
-    )
+    & (Join-Path $repoRoot 'scripts\windows\patch-android.ps1') -AppPath $appPath
     Invoke-Checked -Executable 'flutter' -ArgList @('pub', 'get')
     Invoke-Checked -Executable 'flutter' -ArgList @('analyze')
     Invoke-Checked -Executable 'flutter' -ArgList @('test')

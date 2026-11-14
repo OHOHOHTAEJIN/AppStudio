@@ -53,7 +53,6 @@ jobs:
           Write-Host "Runner: $env:RUNNER_NAME"
           Write-Host "Workspace: $env:GITHUB_WORKSPACE"
           Get-Command flutter -ErrorAction Stop | Select-Object -ExpandProperty Source
-          Get-Command python -ErrorAction Stop | Select-Object -ExpandProperty Source
           flutter --version
           if ($LASTEXITCODE -ne 0) { throw 'Flutter is not usable in the runner service account' }
 
