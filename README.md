@@ -37,3 +37,15 @@ APK는 디버그 설치용입니다. Play Store용 AAB/서명/AdMob/UMP 및 실�
 근무페이는 **2026년 시간급 10,320원**을 초기값으로 사용하나 사용자가 수정할 수 있습니다. 법적 수당·주휴수당·4대보험·세금은 근로계약/요건에 따라 달라지므로 **급여명세서 대체용이 아닙니다**. 휴게시간은 야간 근무에 비례 배분하는 근사 방식입니다. <https://www.moel.go.kr/news/enews/report/enewsView.do?news_seq=18144>
 
 관련 문서: [기능 현황](docs/FEATURE_STATUS.md), [출시 준비](docs/RELEASE_CHECKLIST.md).
+
+## 최신 실제 Android 빌드 검증 — 2026-11-14
+
+- 최종 소스: `124b9b52519306dbb07bc86e5a893e1f0caba289` (PR #11 병합)
+- 각 앱 Flutter analyze 및 widget/unit tests: **4/4 통과**
+- 집 Windows 러너 실제 디버그 APK 빌드: **4/4 통과**
+- 검증된 AppStudio Actions: [빌드 #13](https://github.com/OHOHOHTAEJIN/AppStudio/actions/runs/43604570467) — **success**
+- Android APK ZIP: [appstudio-debug-apks-13](https://github.com/OHOHOHTAEJIN/AppStudio/actions/runs/43604570467/artifacts/14118297030)
+- ZIP 내용: `pixel_slim-debug.apk`, `docu_snap-debug.apk`, `privacy_mosaic-debug.apk`, `shift_pay-debug.apk`
+- ZIP 약 341 MB, 21일 보관; debug APK이므로 Play Store 제출용 서명 AAB는 아님
+
+**제약:** Flutter 테스트/Android 빌드 성공과 실기기의 ML Kit 얼굴·문자 인식, 파일 공유, 화면 터치 동작은 별도 검증입니다. 실사용 전 [신규 앱 QA](docs/QA_NEW_APPS.md)를 확인하세요.

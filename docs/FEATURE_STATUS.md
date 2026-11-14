@@ -18,3 +18,10 @@
 - 자동 얼굴/문자 감지는 완전한 익명화 보장을 의미하지 않음
 - 급여 계산은 추정치. 주 40시간 초과 수당, 주휴/휴일수당 자동 판정, 공제·세금, 실제 휴게시간 배분 및 국가별 법령 자동 적용은 미구현
 - AdMob·UMP, 서명 AAB·Play Console, 폴더블·태블릿 실기기 검증은 미완료
+
+## 이번 턴 검증 결과
+- GitHub PR #11 main 병합 SHA `124b9b52`
+- 신규 유틸리티 및 기존 유지 4개 앱 Flutter analyze/test 통과
+- Windows runner APK 생성·수량 검증·Artifact 업로드 성공: [빌드 #13](https://github.com/OHOHOHTAEJIN/AppStudio/actions/runs/43604570467)
+- 4개 APK: `privacy_mosaic`, `shift_pay`, `pixel_slim`, `docu_snap` (게임 2개 미포함)
+- Android 실기기 기능 검증은 아직 수행되지 않음
