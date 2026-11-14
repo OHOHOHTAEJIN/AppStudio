@@ -38,6 +38,12 @@ jobs:
     if: github.repository == 'OHOHOHTAEJIN/AppStudio'
     runs-on: [self-hosted, Windows, X64, appstudio-android]
     timeout-minutes: 180
+    # Trust only the already-installed Flutter SDK for this job, without editing
+    # the service account's global Git configuration.
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: safe.directory
+      GIT_CONFIG_VALUE_0: D:/dev/flutter
     defaults:
       run:
         shell: powershell
