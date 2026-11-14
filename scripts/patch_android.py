@@ -8,6 +8,8 @@ LABELS = {
     "pixel_slim": "픽셀 슬림",
     "docu_snap": "도큐 스냅",
     "daily_quiz": "데일리 퀴즈",
+    "privacy_mosaic": "모자이크 가드",
+    "shift_pay": "근무페이",
 }
 if len(sys.argv) != 2:
     raise SystemExit("Usage: patch_android.py apps/pulse_puzzle")
@@ -30,7 +32,7 @@ for old, new in [
     ("minSdkVersion flutter.minSdkVersion", "minSdkVersion 24"),
 ]:
     data = data.replace(old, new)
-if name == "docu_snap" and "com.google.mlkit:text-recognition-korean:16.0.1" not in data:
+if name in ("docu_snap", "privacy_mosaic") and "com.google.mlkit:text-recognition-korean:16.0.1" not in data:
     if gradle.suffix == ".kts":
         data += '\n\ndependencies {\n    implementation("com.google.mlkit:text-recognition-korean:16.0.1")\n}\n'
     else:

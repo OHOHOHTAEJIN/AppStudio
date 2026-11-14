@@ -1,10 +1,10 @@
 param(
-  [ValidateSet('all','pulse_puzzle','pixel_slim','docu_snap','daily_quiz')]
+  [ValidateSet('all','privacy_mosaic','pixel_slim','docu_snap','shift_pay')]
   [string]$App = 'all'
 )
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
-$apps = if ($App -eq 'all') { @('pulse_puzzle','pixel_slim','docu_snap','daily_quiz') } else { @($App) }
+$apps = if ($App -eq 'all') { @('privacy_mosaic','pixel_slim','docu_snap','shift_pay') } else { @($App) }
 foreach ($name in $apps) {
   Push-Location (Join-Path $root "apps/$name")
   try {
@@ -15,6 +15,12 @@ foreach ($name in $apps) {
     if ($LASTEXITCODE -ne 0) { throw "Android patch failed: $name" }
     flutter pub get
     if ($LASTEXITCODE -ne 0) { throw "pub get failed: $name" }
+    if ($name -eq 'privacy_mosaic' -or $name -eq 'shift_pay') {
+      dart run tool/generate_icon.dart $name
+      if ($LASTEXITCODE -ne 0) { throw "icon generation failed: $name" }
+    }
+    dart run flutter_launcher_icons
+    if ($LASTEXITCODE -ne 0) { throw "launcher creation failed: $name" }
     flutter analyze
     if ($LASTEXITCODE -ne 0) { throw "flutter analyze failed: $name" }
     flutter test

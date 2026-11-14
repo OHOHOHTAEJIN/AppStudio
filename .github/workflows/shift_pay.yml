@@ -1,0 +1,60 @@
+name: shift_pay CI
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/shift_pay/**'
+      - 'packages/app_core/**'
+      - 'scripts/patch_android.py'
+      - '.github/workflows/shift_pay.yml'
+  pull_request:
+    paths:
+      - 'apps/shift_pay/**'
+      - 'packages/app_core/**'
+      - 'scripts/patch_android.py'
+      - '.github/workflows/shift_pay.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.2'
+          channel: stable
+          cache: true
+      - name: Generate Android host
+        working-directory: apps/shift_pay
+        run: flutter create --platforms=android --org=com.uikstudio --project-name=shift_pay --no-pub .
+      - name: Patch platform configuration
+        run: python3 scripts/patch_android.py apps/shift_pay
+      - name: Install dependencies
+        working-directory: apps/shift_pay
+        run: flutter pub get
+      - name: Generate new launcher art
+        working-directory: apps/shift_pay
+        run: dart run tool/generate_icon.dart shift_pay
+      - name: Generate Android launcher resources
+        working-directory: apps/shift_pay
+        run: dart run flutter_launcher_icons
+      - name: Analyze
+        working-directory: apps/shift_pay
+        run: flutter analyze
+      - name: Widget and calculation tests
+        working-directory: apps/shift_pay
+        run: flutter test
+      - name: Debug APK (manual only)
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: apps/shift_pay
+        run: flutter build apk --debug
+      - name: Upload debug APK (manual only)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: shift_pay-debug-apk
+          path: apps/shift_pay/build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error

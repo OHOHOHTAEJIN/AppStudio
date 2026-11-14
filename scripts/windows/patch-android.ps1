@@ -11,6 +11,8 @@ $labelCodepoints = @{
   pulse_puzzle = @(0xD384, 0xC2A4, 0x20, 0xD37C, 0xC990)
   pixel_slim = @(0xD53D, 0xC140, 0x20, 0xC2AC, 0xB9BC)
   docu_snap = @(0xB3C4, 0xD050, 0x20, 0xC2A4, 0xB0C5)
+  privacy_mosaic = @(0xBAA8, 0xC790, 0xC774, 0xD06C, 0x20, 0xAC00, 0xB4DC)
+  shift_pay = @(0xADFC, 0xBB34, 0xD398, 0xC774)
   daily_quiz = @(0xB370, 0xC77C, 0xB9AC, 0x20, 0xD034, 0xC988)
 }
 
@@ -42,7 +44,7 @@ foreach ($pair in $replacements) {
   $gradleText = $gradleText.Replace($pair[0], $pair[1])
 }
 # The Korean OCR model is required in addition to the Flutter ML Kit wrapper.
-if ($appName -eq 'docu_snap') {
+if ($appName -eq 'docu_snap' -or $appName -eq 'privacy_mosaic') {
   $ocr = 'com.google.mlkit:text-recognition-korean:16.0.1'
   if (-not $gradleText.Contains($ocr)) {
     if ($gradle.EndsWith('.kts')) {

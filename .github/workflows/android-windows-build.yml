@@ -16,10 +16,10 @@ on:
         default: all
         options:
           - all
-          - pulse_puzzle
+          - privacy_mosaic
           - pixel_slim
           - docu_snap
-          - daily_quiz
+          - shift_pay
       publish_release:
         description: Also publish debug APKs as a GitHub prerelease (not Play Store)
         type: boolean
