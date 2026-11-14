@@ -45,8 +45,8 @@ jobs:
       GIT_CONFIG_KEY_0: safe.directory
       GIT_CONFIG_VALUE_0: D:/dev/flutter
       # Keep Pub and Gradle caches on the same drive as the Android project.
-      PUB_CACHE: ${{ runner.workspace }}\_pub_cache
-      GRADLE_USER_HOME: ${{ runner.workspace }}\_gradle_cache
+      PUB_CACHE: D:/gh-runner-appstudio/_work/_pub_cache
+      GRADLE_USER_HOME: D:/gh-runner-appstudio/_work/_gradle_cache
     defaults:
       run:
         shell: powershell
