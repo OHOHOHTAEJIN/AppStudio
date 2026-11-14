@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         working-directory: apps/daily_quiz
         run: flutter pub get
+      - name: Generate Android app launcher icon
+        working-directory: apps/daily_quiz
+        run: dart run flutter_launcher_icons
       - name: Analyze
         working-directory: apps/daily_quiz
         run: flutter analyze

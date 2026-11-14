@@ -42,6 +42,10 @@ foreach ($name in $selected) {
     & (Join-Path $repoRoot 'scripts\windows\patch-android.ps1') -AppPath $appPath
     Invoke-Checked -Executable 'flutter' -ArgList @('clean')
     Invoke-Checked -Executable 'flutter' -ArgList @('pub', 'get')
+    Invoke-Checked -Executable 'dart' -ArgList @('run', 'flutter_launcher_icons')
+    $launcher = Join-Path $appPath 'android\app\src\main\res\mipmap-xxxhdpi\ic_launcher.png'
+    if (-not (Test-Path -LiteralPath $launcher)) { throw "Launcher PNG not generated: $launcher" }
+    Write-Host "[ICON] generated $name launcher resources ($((Get-Item -LiteralPath $launcher).Length) bytes)"
     Invoke-Checked -Executable 'flutter' -ArgList @('analyze')
     Invoke-Checked -Executable 'flutter' -ArgList @('test')
     Invoke-Checked -Executable 'flutter' -ArgList @('build', 'apk', '--debug')

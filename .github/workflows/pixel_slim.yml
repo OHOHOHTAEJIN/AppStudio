@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         working-directory: apps/pixel_slim
         run: flutter pub get
+      - name: Generate Android app launcher icon
+        working-directory: apps/pixel_slim
+        run: dart run flutter_launcher_icons
       - name: Analyze
         working-directory: apps/pixel_slim
         run: flutter analyze
