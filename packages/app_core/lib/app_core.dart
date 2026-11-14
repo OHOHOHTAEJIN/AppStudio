@@ -75,7 +75,7 @@ class AdaptiveStatGrid extends StatelessWidget {
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: columns,
         crossAxisSpacing: 8, mainAxisSpacing: 8,
-        childAspectRatio: constraints.maxWidth < 360 ? 1.4 : 1.9,
+        mainAxisExtent: constraints.maxWidth < 360 ? 132 : 120,
       ),
       itemBuilder: (context, i) => children[i],
     );
