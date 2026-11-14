@@ -1,0 +1,21 @@
+name: docu_snap
+description: Offline camera to PDF
+version: 0.1.0+1
+publish_to: none
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  app_core:
+    path: ../../packages/app_core
+  image_picker: '>=1.2.0 <1.2.3'
+  pdf: '>=3.11.3 <3.13.0'
+  path_provider: '>=2.1.5 <2.1.6'
+  share_plus: '>=10.1.4 <11.0.0'
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+flutter:
+  uses-material-design: true

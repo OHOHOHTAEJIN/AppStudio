@@ -1,0 +1,54 @@
+name: docu_snap CI
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/docu_snap/**'
+      - 'packages/app_core/**'
+      - 'scripts/patch_android.py'
+      - '.github/workflows/docu_snap.yml'
+  pull_request:
+    paths:
+      - 'apps/docu_snap/**'
+      - 'packages/app_core/**'
+      - 'scripts/patch_android.py'
+      - '.github/workflows/docu_snap.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.2'
+          channel: stable
+          cache: true
+      - name: Generate Android host
+        working-directory: apps/docu_snap
+        run: flutter create --platforms=android --org=com.uikstudio --project-name=docu_snap --no-pub .
+      - name: Patch platform configuration
+        run: python3 scripts/patch_android.py apps/docu_snap
+      - name: Install dependencies
+        working-directory: apps/docu_snap
+        run: flutter pub get
+      - name: Analyze
+        working-directory: apps/docu_snap
+        run: flutter analyze
+      - name: Widget tests
+        working-directory: apps/docu_snap
+        run: flutter test
+      - name: Build debug APK (manual only)
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: apps/docu_snap
+        run: flutter build apk --debug
+      - name: Upload debug APK (manual only)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: docu_snap-debug-apk
+          path: apps/docu_snap/build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
