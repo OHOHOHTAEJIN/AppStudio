@@ -58,6 +58,10 @@ jobs:
         run: |
           .\scripts\windows\detect-android-sdk.ps1
 
+      - name: Detect Java JDK for Android Gradle
+        run: |
+          .\scripts\windows\detect-java.ps1
+
       - name: Validate local Flutter/Android toolchain
         run: |
           Write-Host "Runner: $env:RUNNER_NAME"
