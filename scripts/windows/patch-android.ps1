@@ -135,58 +135,28 @@ if (Test-Path $gradleProperties) {
   }
 }
 
-# Limit this generated AppStudio project's Gradle memory/parallelism.
-# Do not edit JVM, Gradle or service settings shared with UikChanggo.
+# Limit memory/parallelism only for this AppStudio Gradle build.
 $gradleProperties = Join-Path $root 'android\gradle.properties'
 if (Test-Path -LiteralPath $gradleProperties) {
   $settings = [System.IO.File]::ReadAllText($gradleProperties)
-  $memoryLine = 'org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1024m -Dfile.encoding=UTF-8'
-  if ($settings -match '(?m)^org\.gradle\.jvmargs=.*
-if (Test-Path $generatedTest) {
-  $content = [System.IO.File]::ReadAllText($generatedTest)
-  if ($content.Contains('await tester.pumpWidget(const MyApp());')) {
-    Remove-Item $generatedTest -Force
-  }
-}
-
-Write-Host "[END] patch-android $appName (API 36; PowerShell; no Python dependency)"
-) {
-    $settings = [regex]::Replace($settings, '(?m)^org\.gradle\.jvmargs=.*
-if (Test-Path $generatedTest) {
-  $content = [System.IO.File]::ReadAllText($generatedTest)
-  if ($content.Contains('await tester.pumpWidget(const MyApp());')) {
-    Remove-Item $generatedTest -Force
-  }
-}
-
-Write-Host "[END] patch-android $appName (API 36; PowerShell; no Python dependency)"
-, $memoryLine)
+  $targetMemory = 'org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1024m -Dfile.encoding=UTF-8'
+  $memoryPattern = '(?m)^org\.gradle\.jvmargs=.*$'
+  if ([regex]::IsMatch($settings, $memoryPattern)) {
+    $settings = [regex]::Replace($settings, $memoryPattern, $targetMemory)
   } else {
-    $settings += [Environment]::NewLine + $memoryLine
+    $settings += [Environment]::NewLine + $targetMemory
   }
-  foreach ($item in @(
-    'org.gradle.workers.max=2',
-    'org.gradle.parallel=false'
-  )) {
-    $key = $item.Split('=')[0]
-    if ($settings -match ('(?m)^' + [regex]::Escape($key) + '=')) {
-      $settings = [regex]::Replace($settings,
-        '(?m)^' + [regex]::Escape($key) + '=.*
-if (Test-Path $generatedTest) {
-  $content = [System.IO.File]::ReadAllText($generatedTest)
-  if ($content.Contains('await tester.pumpWidget(const MyApp());')) {
-    Remove-Item $generatedTest -Force
-  }
-}
-
-Write-Host "[END] patch-android $appName (API 36; PowerShell; no Python dependency)"
-, $item)
+  foreach ($setting in @('org.gradle.workers.max=2', 'org.gradle.parallel=false')) {
+    $key = $setting.Split('=')[0]
+    $pattern = '(?m)^' + [regex]::Escape($key) + '=.*$'
+    if ([regex]::IsMatch($settings, $pattern)) {
+      $settings = [regex]::Replace($settings, $pattern, $setting)
     } else {
-      $settings += [Environment]::NewLine + $item
+      $settings += [Environment]::NewLine + $setting
     }
   }
   [System.IO.File]::WriteAllText($gradleProperties, $settings, $utf8)
-  Write-Host '[GRADLE] AppStudio limits: Xmx4g, metaspace1g, 2 workers, no parallel projects'
+  Write-Host '[GRADLE] memory=4g, metaspace=1g, workers=2, parallel=false'
 }
 
 $generatedTest = Join-Path $root 'test\widget_test.dart'
