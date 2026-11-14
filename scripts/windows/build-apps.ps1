@@ -40,6 +40,7 @@ foreach ($name in $selected) {
       'create', '--platforms=android', '--org=com.uikstudio', "--project-name=$name", '--no-pub', '.'
     )
     & (Join-Path $repoRoot 'scripts\windows\patch-android.ps1') -AppPath $appPath
+    Invoke-Checked -Executable 'flutter' -ArgList @('clean')
     Invoke-Checked -Executable 'flutter' -ArgList @('pub', 'get')
     Invoke-Checked -Executable 'flutter' -ArgList @('analyze')
     Invoke-Checked -Executable 'flutter' -ArgList @('test')
