@@ -18,5 +18,12 @@
 - [x] AOT 난독화·심볼 외부 분리·아이콘 트리 셰이킹
 - [x] R8 및 Android 리소스 축소
 - [x] 과거 Debug 용량과 새 Release 크기 자동 비교
-- [ ] Windows 최적화 Release 빌드 실제 성공 및 크기·서명 검증
+- [x] Windows 최적화 Release 빌드 4개 성공, `apksigner verify` 통과, 이전 Debug 대비 실제 크기 측정 (#17)
 - [ ] Play Store 서명된 AAB 및 기기별 전달 용량 확인
+
+## 검증된 경량 APK 다운로드
+- [GitHub Actions #17](https://github.com/OHOHOHTAEJIN/AppStudio/actions/runs/43607982171)
+- [최신 ARM64 APK 4종 Artifact](https://github.com/OHOHOHTAEJIN/AppStudio/actions/runs/43607982171/artifacts/14119042321)
+- APK별 실제 크기: 모자이크 71.96 MiB / 픽셀 15.71 MiB / 도큐 46.88 MiB / 근무 15.71 MiB
+- 별도 심볼 Artifact: `appstudio-android-symbols-17`
+- Play Store 정식 출시 전 개별 앱의 업로드 서명 및 AAB는 추가 작업이 필요합니다.

@@ -1,5 +1,24 @@
 # AppStudio — 4개 실용 Android 앱
 
+## 최신 경량 Release APK 검증 — 2026-11-14
+
+- Windows runner [빌드 #17](https://github.com/OHOHOHTAEJIN/AppStudio/actions/runs/43607982171) **SUCCESS** (커밋 `bfc9d3de`)
+- [최신 APK 4종 다운로드 — `appstudio-release-arm64-17`](https://github.com/OHOHOHTAEJIN/AppStudio/actions/runs/43607982171/artifacts/14119042321)
+- 난독화된 앱 크래시 추적용 [별도 심볼 Artifact](https://github.com/OHOHOHTAEJIN/AppStudio/actions/runs/43607982171/artifacts/14119322037)
+- **빌드당 Debug APK는 생성하지 않음**. Release 모드, ARM64 전용, Android R8 코드/리소스 축소, Dart AOT 심볼 외부 분리, APK 서명 검사 통과
+
+| 앱 | 과거 Debug | 경량 ARM64 Release | 감소율 |
+|---|---:|---:|---:|
+| 모자이크 가드 | 200.02 MiB | **71.96 MiB** | **64.0%** |
+| 픽셀 슬림 | 143.64 MiB | **15.71 MiB** | **89.1%** |
+| 도큐 스냅 | 175.23 MiB | **46.88 MiB** | **73.2%** |
+| 근무페이 | 140.56 MiB | **15.71 MiB** | **88.8%** |
+
+이 표는 **APK 파일 크기**입니다. 설치 후 기기 저장 공간 크기와 다를 수 있습니다. ZIP Artifact 자체는 76,362,943바이트(약 72.8 MiB)입니다. ML Kit 얼굴/한국어 문자 인식 기능을 유지하므로 모자이크 가드·도큐 스냅은 상대적으로 큽니다.
+
+**서명:** APK는 Release 모드로 빌드했지만 Flutter 생성 Android 호스트의 **테스트용(debug) 서명키**를 사용합니다. APK 서명 검증은 통과했으며 직접 설치용 테스트에 쓸 수 있습니다. **Play Store 제출용 서명된 AAB는 아닙니다.** 32비트 전용 Android 기기나 x86 에뮬레이터는 지원하지 않습니다.
+
+
 CoStock 및 유익창고 블로그와 독립적으로 운영하는 Flutter 모노레포입니다.
 
 ## 활성 앱 (자동 빌드 대상)
@@ -42,7 +61,7 @@ GitHub Actions에 `appstudio-release-arm64-N`(APK 4개 + 크기 비교 CSV), `ap
 
 관련 문서: [기능 현황](docs/FEATURE_STATUS.md), [출시 준비](docs/RELEASE_CHECKLIST.md).
 
-## 최신 실제 Android 빌드 검증 — 2026-11-14
+## 과거 Debug 빌드 검증 (보관용) — 2026-11-14
 
 - 최종 소스: `124b9b52519306dbb07bc86e5a893e1f0caba289` (PR #11 병합)
 - 각 앱 Flutter analyze 및 widget/unit tests: **4/4 통과**
