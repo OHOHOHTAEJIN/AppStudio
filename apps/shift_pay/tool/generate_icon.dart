@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_interpolation_to_compose_strings, curly_braces_in_flow_control_structures
 import 'dart:io';
 import 'dart:math' as math;
 import 'package:image/image.dart' as img;
@@ -26,7 +27,6 @@ void main(List<String> args) {
     g += (privacy ? 71 : 43) * glow;
     b += (privacy ? 56 : 87) * glow;
     final centerX = x - 256;
-    final centerY = y - 248;
 
     if (privacy) {
       // Rounded outer shield with narrowing lower tip.
